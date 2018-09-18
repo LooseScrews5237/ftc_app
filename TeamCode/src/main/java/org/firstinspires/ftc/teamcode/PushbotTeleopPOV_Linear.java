@@ -51,11 +51,10 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  */
 
 @TeleOp(name="Pushbot: Teleop POV", group="Pushbot")
-@Disabled
 public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    RoverRukusHardwarePushbot robot           = new RoverRukusHardwarePushbot();   // Use a Pushbot's hardware
+    private RoverRukusHardwarePushbot robot           = new RoverRukusHardwarePushbot();   // Use a Pushbot's hardware
 
     @Override
     public void runOpMode() {
