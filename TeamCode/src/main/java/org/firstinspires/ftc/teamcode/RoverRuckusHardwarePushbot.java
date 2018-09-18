@@ -30,9 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -49,7 +47,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Motor channel:  Left  drive motor:        "left_drive"
  * Motor channel:  Right drive motor:        "right_drive"
  */
-public class RoverRukusHardwarePushbot extends HardwarePushbot
+public class RoverRuckusHardwarePushbot extends HardwarePushbot
 {
     /* Public OpMode members. */
     public DcMotor leftFrontDrive   = null;
@@ -58,11 +56,10 @@ public class RoverRukusHardwarePushbot extends HardwarePushbot
     public DcMotor rightRearDrive   = null;
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
+    private HardwareMap hwMap       = null;
 
     /* Constructor */
-    public RoverRukusHardwarePushbot(){
+    public RoverRuckusHardwarePushbot(){
 
     }
 
@@ -87,7 +84,7 @@ public class RoverRukusHardwarePushbot extends HardwarePushbot
         setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public  void setDriveDirection(DcMotor.Direction direction) {
+    public void setDriveDirection(DcMotor.Direction direction) {
 
         DcMotor.Direction inverseDirection = null;
         switch (direction) {
@@ -118,6 +115,10 @@ public class RoverRukusHardwarePushbot extends HardwarePushbot
         leftRearDrive.setMode(mode);
         rightFrontDrive.setMode(mode);
         rightRearDrive.setMode(mode);
+    }
+
+    public void driveToDistance(DcMotor.Direction direction, double inchesToDrive) {
+        // TODO: Complete this method
     }
  }
 
