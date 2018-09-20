@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -55,8 +56,17 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor rightFrontDrive  = null;
     public DcMotor rightRearDrive   = null;
 
+    public ColorSensor colorSensor  = null;
+
+    /* Public constants */
+    public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    public static final double DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    public static final double WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                                                            (WHEEL_DIAMETER_INCHES * 3.1415);
+
     /* local OpMode members. */
-    private HardwareMap hwMap       = null;
+    private HardwareMap hwMap = null;
 
     /* Constructor */
     public RoverRuckusHardwarePushbot(){
@@ -76,12 +86,14 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
         // Set the default drive direction
         setDriveDirection(DcMotor.Direction.FORWARD);
-
         // Set all motors to zero power
         stopDriveMotors();
-
         // Set all motors to run without encoders.
         setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        colorSensor     = hwMap.get(ColorSensor.class, "color_sensor");
+        // Turn off the LED by default so we don't burn it out.
+        colorSensor.enableLed(false);
     }
 
     public void setDriveDirection(DcMotor.Direction direction) {
@@ -100,7 +112,6 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         leftRearDrive.setDirection(direction);
         rightFrontDrive.setDirection(inverseDirection);
         rightRearDrive.setDirection(inverseDirection);
-
     }
 
     public void stopDriveMotors() {
@@ -117,8 +128,28 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         rightRearDrive.setMode(mode);
     }
 
-    public void driveToDistance(DcMotor.Direction direction, double inchesToDrive) {
-        // TODO: Complete this method
+    public void setDriveMotorPower(double left, double right) {
+        leftFrontDrive.setPower(left);
+        leftRearDrive.setPower(-left);
+        rightFrontDrive.setPower(right);
+        rightRearDrive.setPower(-right);
+    }
+
+    public void resetEncoders() {
+        setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setNewTargetPosition(double leftInches, double rightInches) {
+        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        int newLeftRearTarget  = leftRearDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        int newRightRearTarget  = rightRearDrive.getTargetPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+        leftRearDrive.setTargetPosition(newLeftRearTarget);
+        rightFrontDrive.setTargetPosition(newRightFrontTarget);
+        rightRearDrive.setTargetPosition(newRightRearTarget);
     }
  }
 
