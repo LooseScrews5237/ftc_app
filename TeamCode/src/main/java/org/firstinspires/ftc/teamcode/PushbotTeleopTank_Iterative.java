@@ -89,24 +89,40 @@ public class PushbotTeleopTank_Iterative extends OpMode{
      */
     @Override
     public void loop() {
-        double left;
-        double right;
+        double leftPower;
+        double rightPower;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-        right = gamepad1.left_stick_y * .5; // cut the power in half
-        left = gamepad1.right_stick_y * .5; // cut the power in half
+        rightPower = gamepad1.left_stick_y * .5; // cut the power in half
+        leftPower = gamepad1.right_stick_y * .5; // cut the power in half
 
-        robot.leftFrontDrive.setPower(left);
-        robot.leftRearDrive.setPower(left);
-        robot.rightFrontDrive.setPower(right);
-        robot.rightRearDrive.setPower(right);
+        if (gamepad1.right_trigger > 0.8) {
+            rightPower = gamepad1.left_stick_y * .5; // cut the power in half
+            leftPower = gamepad1.right_stick_y * .5; // cut the power in half
+        }
+
+        if (gamepad1.right_bumper) {
+            rightPower = gamepad1.left_stick_y * 2;
+            leftPower = gamepad2.right_stick_y * 2;
+
+            if (rightPower > 1){
+                rightPower = 1;
+            }
+            if (leftPower > 1) {
+                leftPower = 1;
+            }
+        }
+        
+        robot.leftFrontDrive.setPower(leftPower);
+        robot.leftRearDrive.setPower(leftPower);
+        robot.rightFrontDrive.setPower(rightPower);
+        robot.rightRearDrive.setPower(rightPower);
 
 
         // Send telemetry message to signify robot running;
-        telemetry.addData("left",  "%.2f", left);
-        telemetry.addData("right", "%.2f", right);
+        telemetry.addData("left",  "%.2f", leftPower);
+        telemetry.addData("right", "%.2f", rightPower);
     }
-
     /*
      * Code to run ONCE after the driver hits STOP
      */
