@@ -97,13 +97,13 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         leftPower = gamepad1.right_stick_y * .5; // cut the power in half
 
         if (gamepad1.right_trigger > 0.8) {
-            rightPower = gamepad1.left_stick_y * .5; // cut the power in half
-            leftPower = gamepad1.right_stick_y * .5; // cut the power in half
+            rightPower = rightPower * .5; // cut the power in half
+            leftPower = leftPower * .5; // cut the power in half
         }
 
         if (gamepad1.right_bumper) {
-            rightPower = gamepad1.left_stick_y * 2;
-            leftPower = gamepad2.right_stick_y * 2;
+            rightPower = rightPower * 2;
+            leftPower = leftPower * 2;
 
             if (rightPower > 1){
                 rightPower = 1;

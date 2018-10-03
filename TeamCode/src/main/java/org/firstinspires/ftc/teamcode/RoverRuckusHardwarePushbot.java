@@ -85,7 +85,6 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
         rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
         rightRearDrive  = hwMap.get(DcMotor.class, "right_rear_drive");
-        liftMotor       = hwMap.get(DcMotor.class, "lift_motor");
 
         // Set the default drive direction
         setDriveDirection(DcMotor.Direction.FORWARD);
@@ -95,11 +94,13 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // set lift motor properties
+        liftMotor = hwMap.get(DcMotor.class, "lift_motor");
         liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         liftMotor.setPower(0);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        colorSensor     = hwMap.get(ColorSensor.class, "color_sensor");
+        // color sensor
+        colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
         // Turn off the LED by default so we don't burn it out.
         colorSensor.enableLed(false);
     }
@@ -167,6 +168,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public void stopLiftArm(){
         liftMotor.setPower(0);
     }
+
     public void lowerLiftArm(){
         liftMotor.setPower(-0.5);
     }
