@@ -64,6 +64,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
+        robot.EnableLift = false;
+        robot.EnableColorSensor = false;
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -92,6 +94,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         double leftPower;
         double rightPower;
 
+        // driver control
+
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
         rightPower = gamepad1.left_stick_y * .5; // cut the power in half
         leftPower = gamepad1.right_stick_y * .5; // cut the power in half
@@ -100,8 +104,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             rightPower = rightPower * .5; // cut the power in half
             leftPower = leftPower * .5; // cut the power in half
         }
-
-        if (gamepad1.right_bumper) {
+        else if (gamepad1.right_bumper) {
             rightPower = rightPower * 2;
             leftPower = leftPower * 2;
 
@@ -110,6 +113,19 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
             if (leftPower > 1) {
                 leftPower = 1;
+            }
+        }
+
+        // manipulator control
+        if (robot.EnableLift) {
+            if (gamepad2.left_bumper) {
+                robot.raiseLiftArm();
+            }
+            else if (gamepad2.left_trigger > 0.8) {
+                robot.lowerLiftArm();
+            }
+            else {
+                robot.stopLiftArm();
             }
         }
 

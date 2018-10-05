@@ -59,6 +59,8 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor liftMotor        = null;
 
     public ColorSensor colorSensor  = null;
+    public boolean EnableLift = true;
+    public boolean EnableColorSensor = true;
 
     /* Public constants */
     public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
@@ -94,15 +96,20 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // set lift motor properties
-        liftMotor = hwMap.get(DcMotor.class, "lift_motor");
-        liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        liftMotor.setPower(0);
-        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (EnableLift)
+        {
+            liftMotor = hwMap.get(DcMotor.class, "lift_motor");
+            liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            liftMotor.setPower(0);
+            liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         // color sensor
-        colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
-        // Turn off the LED by default so we don't burn it out.
-        colorSensor.enableLed(false);
+        if (EnableColorSensor) {
+            colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
+            // Turn off the LED by default so we don't burn it out.
+            colorSensor.enableLed(false);
+        }
     }
 
     public void setDriveDirection(DcMotor.Direction direction) {
