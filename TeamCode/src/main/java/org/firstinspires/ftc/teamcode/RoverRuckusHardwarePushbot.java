@@ -57,10 +57,13 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor rightFrontDrive  = null;
     public DcMotor rightRearDrive   = null;
     public DcMotor liftMotor        = null;
+    public DcMotor beaterBarMotor   = null;
 
     public ColorSensor colorSensor  = null;
     public boolean EnableLift = true;
     public boolean EnableColorSensor = true;
+    public boolean enableBeaterBar = true;
+
 
     /* Public constants */
     public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
@@ -109,6 +112,11 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
             // Turn off the LED by default so we don't burn it out.
             colorSensor.enableLed(false);
+        }
+
+        // beater bar
+        if (enableBeaterBar) {
+            beaterBarMotor = hwMap.get(DcMotor.class, "beatebar_motor");
         }
     }
 
