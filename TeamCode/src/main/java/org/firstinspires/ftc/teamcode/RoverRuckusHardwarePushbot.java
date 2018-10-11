@@ -60,9 +60,9 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor beaterBarMotor   = null;
 
     public ColorSensor colorSensor  = null;
-    public boolean EnableLift = true;
-    public boolean EnableColorSensor = true;
-    public boolean enableBeaterBar = true;
+    public boolean EnableLift = false;
+    public boolean EnableColorSensor = false;
+    public boolean enableBeaterBar = false;
 
 
     /* Public constants */
@@ -116,7 +116,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
         // beater bar
         if (enableBeaterBar) {
-            beaterBarMotor = hwMap.get(DcMotor.class, "beatebar_motor");
+            beaterBarMotor = hwMap.get(DcMotor.class, "beaterbar_motor");
         }
     }
 
@@ -186,5 +186,14 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
     public void lowerLiftArm(){
         liftMotor.setPower(-0.5);
+    }
+
+    public void runBeaterBar (DcMotor.Direction direction) {
+        beaterBarMotor.setDirection(direction);
+        beaterBarMotor.setPower (.5);
+    }
+
+    public void stopBeaterBar() {
+        beaterBarMotor.setPower(0);
     }
  }
