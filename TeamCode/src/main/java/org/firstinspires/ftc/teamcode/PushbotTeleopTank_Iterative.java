@@ -64,7 +64,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.EnableLift = false;
+        robot.EnableLift = true;
         robot.EnableColorSensor = false;
         robot.init(hardwareMap);
 

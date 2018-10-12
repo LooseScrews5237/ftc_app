@@ -177,7 +177,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     }
 
     public void raiseLiftArm(){
-        liftMotor.setPower(.25);
+        liftMotor.setPower(-.5);
     }
 
     public void stopLiftArm(){
@@ -185,7 +185,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     }
 
     public void lowerLiftArm(){
-        liftMotor.setPower(-0.5);
+        liftMotor.setPower(0.75);
     }
 
     public void runBeaterBar (DcMotor.Direction direction) {
