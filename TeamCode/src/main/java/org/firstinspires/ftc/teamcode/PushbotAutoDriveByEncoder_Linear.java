@@ -63,15 +63,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
-@Disabled
 public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot   = new RoverRuckusHardwarePushbot();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    private static final double     DRIVE_SPEED             = 0.6;
-    private static final double     TURN_SPEED              = 0.5;
+    private static final double     DRIVE_SPEED             = 0.2;
+    private static final double     TURN_SPEED              = 0.1;
 
     @Override
     public void runOpMode() {
@@ -89,18 +88,19 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.resetEncoders();
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robot.leftDrive.getCurrentPosition(),
-                          robot.rightDrive.getCurrentPosition());
-        telemetry.update();
+        //telemetry.addData("Path0",  "Starting at %7d :%7d",
+          //                robot.leftDrive.getCurrentPosition(),
+            //              robot.rightDrive.getCurrentPosition());
+        //telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, 12, 12, 2.0);
         encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
 
@@ -124,10 +124,12 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            robot.setNewTargetPosition(leftInches, rightInches);
+            robot.setNewTargetPosition(leftInches, rightInches, telemetry);
 
             // Turn On RUN_TO_POSITION
             robot.setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            sleep(3000);
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -140,14 +142,9 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.leftDrive.getCurrentPosition(),
-                                            robot.rightDrive.getCurrentPosition());
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && robot.motorsAreBusy()) {
+                telemetry.addData("current", "%7d | %7d",
+                        robot.leftFrontDrive.getCurrentPosition(), robot.rightFrontDrive.getCurrentPosition());
                 telemetry.update();
             }
 

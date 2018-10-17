@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * This is NOT an opmode.
@@ -67,8 +68,8 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
     /* Public constants */
     public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    public static final double DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    public static final double WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    public static final double DRIVE_GEAR_REDUCTION    = 0.25 ;     // This is < 1.0 if geared UP
+    public static final double WHEEL_DIAMETER_INCHES   = 2.75 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
 
@@ -132,10 +133,10 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
                 break;
         }
 
-        leftFrontDrive.setDirection(direction);
-        leftRearDrive.setDirection(direction);
-        rightFrontDrive.setDirection(inverseDirection);
-        rightRearDrive.setDirection(inverseDirection);
+        leftFrontDrive.setDirection(inverseDirection);
+        leftRearDrive.setDirection(inverseDirection);
+        rightFrontDrive.setDirection(direction);
+        rightRearDrive.setDirection(direction);
     }
 
     public void stopDriveMotors() {
@@ -164,17 +165,21 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void setNewTargetPosition(double leftInches, double rightInches) {
+    public void setNewTargetPosition(double leftInches, double rightInches, Telemetry telemetry) {
+        telemetry.addData("position", "current: %7d: %7d",
+                leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
         int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
         int newLeftRearTarget  = leftRearDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
         int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
         int newRightRearTarget  = rightRearDrive.getTargetPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
+        telemetry.addData("newPosition", "target: %7d: %7d", newLeftFrontTarget, newRightFrontTarget);
         leftFrontDrive.setTargetPosition(newLeftFrontTarget);
         leftRearDrive.setTargetPosition(newLeftRearTarget);
         rightFrontDrive.setTargetPosition(newRightFrontTarget);
         rightRearDrive.setTargetPosition(newRightRearTarget);
     }
+
 
     public void raiseLiftArm(){
         liftMotor.setPower(-.5);
@@ -195,5 +200,10 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
     public void stopBeaterBar() {
         beaterBarMotor.setPower(0);
+    }
+
+    public boolean motorsAreBusy() {
+        return leftFrontDrive.isBusy() && leftRearDrive.isBusy() &&
+                rightFrontDrive.isBusy() && rightRearDrive.isBusy();
     }
  }
