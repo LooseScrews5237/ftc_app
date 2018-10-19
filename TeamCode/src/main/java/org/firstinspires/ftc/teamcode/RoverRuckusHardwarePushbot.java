@@ -87,10 +87,10 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
-        leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
-        rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
-        rightRearDrive  = hwMap.get(DcMotor.class, "right_rear_drive");
+       // leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
+        //leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
+       // rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
+       // rightRearDrive  = hwMap.get(DcMotor.class, "right_rear_drive");
 
         // Set the default drive direction
         setDriveDirection(DcMotor.Direction.FORWARD);
