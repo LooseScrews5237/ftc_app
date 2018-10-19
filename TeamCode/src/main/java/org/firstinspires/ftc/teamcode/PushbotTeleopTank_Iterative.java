@@ -66,6 +66,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
          */
         robot.EnableLift = true;
         robot.EnableColorSensor = false;
+        robot.EnableDriveMotors = true;
+        robot.EnableBeaterBar = false;
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -129,10 +131,12 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
         }
 
-        robot.leftFrontDrive.setPower(leftPower);
-        robot.leftRearDrive.setPower(leftPower);
-        robot.rightFrontDrive.setPower(rightPower);
-        robot.rightRearDrive.setPower(rightPower);
+        if (robot.EnableDriveMotors) {
+            robot.leftFrontDrive.setPower(leftPower);
+            robot.leftRearDrive.setPower(leftPower);
+            robot.rightFrontDrive.setPower(rightPower);
+            robot.rightRearDrive.setPower(rightPower);
+        }
 
 
 

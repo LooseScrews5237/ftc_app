@@ -75,6 +75,11 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        robot.EnableLift = true;
+        robot.EnableColorSensor = false;
+        robot.EnableDriveMotors = true;
+        robot.EnableBeaterBar = false;
+
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here

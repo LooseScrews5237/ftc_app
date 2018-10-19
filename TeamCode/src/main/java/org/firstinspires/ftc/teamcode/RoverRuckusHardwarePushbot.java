@@ -61,9 +61,10 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor beaterBarMotor   = null;
 
     public ColorSensor colorSensor  = null;
-    public boolean EnableLift = false;
-    public boolean EnableColorSensor = false;
-    public boolean enableBeaterBar = false;
+    public boolean EnableLift = true;
+    public boolean EnableColorSensor = true;
+    public boolean EnableBeaterBar = true;
+    public boolean EnableDriveMotors = true;
 
 
     /* Public constants */
@@ -87,17 +88,19 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-       // leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
-        //leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
-       // rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
-       // rightRearDrive  = hwMap.get(DcMotor.class, "right_rear_drive");
+        if (EnableDriveMotors) {
+            leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
+            leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
+            rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
+            rightRearDrive  = hwMap.get(DcMotor.class, "right_rear_drive");
 
-        // Set the default drive direction
-        setDriveDirection(DcMotor.Direction.FORWARD);
-        // Set all motors to zero power
-        stopDriveMotors();
-        // Set all motors to run without encoders.
-        setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Set the default drive direction
+            setDriveDirection(DcMotor.Direction.FORWARD);
+            // Set all motors to zero power
+            stopDriveMotors();
+            // Set all motors to run without encoders.
+            setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         // set lift motor properties
         if (EnableLift)
@@ -116,7 +119,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         }
 
         // beater bar
-        if (enableBeaterBar) {
+        if (EnableBeaterBar) {
             beaterBarMotor = hwMap.get(DcMotor.class, "beaterbar_motor");
         }
     }
