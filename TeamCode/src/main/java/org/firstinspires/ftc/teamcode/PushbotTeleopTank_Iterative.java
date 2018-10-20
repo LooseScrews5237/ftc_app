@@ -99,8 +99,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         // driver control
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-        rightPower = gamepad1.left_stick_y * .5; // cut the power in half
-        leftPower = gamepad1.right_stick_y * .5; // cut the power in half
+        rightPower = gamepad1.right_stick_y * .5; // cut the power in half
+        leftPower = gamepad1.left_stick_y * .5; // cut the power in half
 
         if (gamepad1.right_trigger > 0.8) {
             rightPower = rightPower * .5; // cut the power in half
