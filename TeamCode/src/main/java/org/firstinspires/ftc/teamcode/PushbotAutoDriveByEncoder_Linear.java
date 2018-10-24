@@ -101,16 +101,35 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        detachFromRover( -6.0, 8.0);
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   -6, 6, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -15, -15, 6.0);
-        encoderDrive(DRIVE_SPEED/2, 48, 48, 42.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED,  12,  12, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //encoderDrive(TURN_SPEED,   -6, 6, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED, -15, -15, 6.0);
+        //encoderDrive(DRIVE_SPEED/2, 48, 48, 42.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+    }
+
+    public void detachFromRover(double inches, double timeoutS) {
+        if (opModeIsActive())
+        {
+            robot.resetLiftMotorEncoder();
+            robot.setLiftMotorTargetPosition(inches);
+            robot.lowerLiftArm();
+
+            runtime.reset();
+
+            while (opModeIsActive() && robot.liftMotor.isBusy() && (runtime.seconds() < timeoutS)) {
+                telemetry.addData("Lift Position", "%d7", robot.liftMotor.getCurrentPosition());
+            }
+
+            robot.stopLiftArm();
+        }
     }
 
     /*
@@ -134,7 +153,6 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
             // Turn On RUN_TO_POSITION
             robot.setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            sleep(3000);
 
             // reset the timeout time and start motion.
             runtime.reset();

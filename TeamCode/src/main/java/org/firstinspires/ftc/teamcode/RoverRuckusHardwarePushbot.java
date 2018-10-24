@@ -70,9 +70,12 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     /* Public constants */
     public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     public static final double DRIVE_GEAR_REDUCTION    = 0.25 ;     // This is < 1.0 if geared UP
+    public static final double LIFT_GEAR_REDUCTION     = 4.0;
     public static final double WHEEL_DIAMETER_INCHES   = 2.75 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
+    public static final double COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
+                                                            (1.25 * 3.1415);
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
@@ -208,5 +211,15 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public boolean motorsAreBusy() {
         return leftFrontDrive.isBusy() && leftRearDrive.isBusy() &&
                 rightFrontDrive.isBusy() && rightRearDrive.isBusy();
+    }
+
+    public void resetLiftMotorEncoder() {
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void setLiftMotorTargetPosition(double inchesToTravel) {
+        int targetPosition = liftMotor.getCurrentPosition() + (int)(inchesToTravel * COUNTS_PER_INCH_LIFT);
+        liftMotor.setTargetPosition(targetPosition);
     }
  }
