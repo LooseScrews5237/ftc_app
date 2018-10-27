@@ -59,12 +59,16 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor rightRearDrive   = null;
     public DcMotor liftMotor        = null;
     public DcMotor beaterBarMotor   = null;
+    public DcMotor armPivotMotor    = null;
+    public DcMotor armExtensionMotor = null;
 
     public ColorSensor colorSensor  = null;
     public boolean EnableLift = true;
     public boolean EnableColorSensor = true;
     public boolean EnableBeaterBar = true;
     public boolean EnableDriveMotors = true;
+    public boolean EnableArmPivotMotor = true;
+    public boolean EnableArmExtensionMotor = true;
 
 
     /* Public constants */
@@ -76,6 +80,13 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
     public static final double COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
                                                             (1.25 * 3.1415);
+
+    /* Motor configuration values */
+    private final double ARM_PIVOT_SPEED = 0.3;
+    private final double ARM_EXTENSION_SPEED = 0.3;
+    private final double LIFT_ARM_UP_POWER = 0.5;
+    private final double LIFT_ARM_DOWN_POWER = 0.75;
+    private final double BEATER_BAR_POWER = 0.5;
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
@@ -119,6 +130,18 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
             // Turn off the LED by default so we don't burn it out.
             colorSensor.enableLed(false);
+        }
+
+        if (EnableArmExtensionMotor) {
+            armExtensionMotor = hwMap.get(DcMotor.class, "arm_extension_motor");
+        }
+
+        if (EnableArmPivotMotor) {
+            armPivotMotor = hwMap.get(DcMotor.class, "arm_pivot_motor");
+            armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armPivotMotor.setPower(0);
+            armPivotMotor.setDirection(DcMotor.Direction.FORWARD);
         }
 
         // beater bar
@@ -188,7 +211,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
 
     public void raiseLiftArm(){
-        liftMotor.setPower(-.5);
+        liftMotor.setPower(-LIFT_ARM_UP_POWER);
     }
 
     public void stopLiftArm(){
@@ -196,12 +219,36 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     }
 
     public void lowerLiftArm(){
-        liftMotor.setPower(0.75);
+        liftMotor.setPower(LIFT_ARM_DOWN_POWER);
+    }
+
+    public void pivotArmForward() {
+        armPivotMotor.setPower(ARM_PIVOT_SPEED);
+    }
+
+    public void pivotArmBackward() {
+        armPivotMotor.setPower(-ARM_PIVOT_SPEED);
+    }
+
+    public void pivotArmStop() {
+        armPivotMotor.setPower(0);
+    }
+
+    public void extensionArmExtend() {
+        armExtensionMotor.setPower(ARM_EXTENSION_SPEED);
+    }
+
+    public void extensionArmRetract() {
+        armExtensionMotor.setPower(-ARM_EXTENSION_SPEED);
+    }
+
+    public void extensionArmStop() {
+        armExtensionMotor.setPower(0);
     }
 
     public void runBeaterBar (DcMotor.Direction direction) {
         beaterBarMotor.setDirection(direction);
-        beaterBarMotor.setPower (.5);
+        beaterBarMotor.setPower (BEATER_BAR_POWER);
     }
 
     public void stopBeaterBar() {

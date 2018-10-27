@@ -54,7 +54,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(); // use the class created to define a Pushbot's hardware
-
+    private final double ANALOG_DEADZONE = 0.2;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -68,6 +68,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         robot.EnableColorSensor = false;
         robot.EnableDriveMotors = true;
         robot.EnableBeaterBar = false;
+        robot.EnableArmPivotMotor = true;
+        robot.EnableArmExtensionMotor = false;
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -138,7 +140,31 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             robot.rightRearDrive.setPower(rightPower);
         }
 
+        if (robot.EnableArmPivotMotor) {
+            // Note: pushing the analog stick forward will result in a negative number
+            if (gamepad2.left_stick_y < -ANALOG_DEADZONE) {
+                robot.pivotArmForward();
+            }
+            else if (gamepad2.left_stick_y > ANALOG_DEADZONE) {
+                robot.pivotArmBackward();
+            }
+            else {
+                robot.pivotArmStop();
+            }
+        }
 
+        if (robot.EnableArmExtensionMotor) {
+            // Note: pushing the analog stick forward will result in a negative number
+            if (gamepad2.right_stick_y < -ANALOG_DEADZONE) {
+                robot.extensionArmExtend();
+            }
+            else if (gamepad2.right_stick_y > ANALOG_DEADZONE) {
+                robot.extensionArmRetract();
+            }
+            else {
+                robot.extensionArmStop();
+            }
+        }
 
 
         // Send telemetry message to signify robot running;

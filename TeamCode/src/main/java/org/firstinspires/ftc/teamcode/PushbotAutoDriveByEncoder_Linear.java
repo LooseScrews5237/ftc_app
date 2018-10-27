@@ -92,16 +92,10 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
         robot.resetEncoders();
 
-        // Send telemetry message to indicate successful Encoder reset
-        //telemetry.addData("Path0",  "Starting at %7d :%7d",
-          //                robot.leftDrive.getCurrentPosition(),
-            //              robot.rightDrive.getCurrentPosition());
-        //telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        detachFromRover( -6.0, 8.0);
+        detachFromRover( -7.5, 8.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -115,7 +109,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         telemetry.update();
     }
 
-    public void detachFromRover(double inches, double timeoutS) {
+    private void detachFromRover(double inches, double timeoutS) {
         if (opModeIsActive())
         {
             robot.resetLiftMotorEncoder();
@@ -140,7 +134,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void encoderDrive(double speed,
+    private void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
 
@@ -179,5 +173,9 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
             //  sleep(250);   // optional pause after each move
         }
+    }
+
+    private void encoderTurn(double speed, int degrees, double timeoutS) {
+
     }
 }
