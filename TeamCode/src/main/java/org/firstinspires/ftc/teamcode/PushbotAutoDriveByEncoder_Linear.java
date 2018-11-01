@@ -180,6 +180,7 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
     }
 
     private void encoderTurn(double speed, int degrees, double timeoutS) {
-
+        double inches = degrees * robot.INCHES_PER_DEGREE;
+        encoderDrive(speed, inches, -inches, timeoutS);
     }
 }
