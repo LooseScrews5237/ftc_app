@@ -79,6 +79,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.EnableColorSensor = false;
         robot.EnableDriveMotors = true;
         robot.EnableBeaterBar = false;
+        robot.EnableArmExtensionMotor = false;
+        robot.EnableArmPivotMotor = false;
 
         /*
          * Initialize the drive system variables.
@@ -96,6 +98,8 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
         waitForStart();
 
         detachFromRover( -7.5, 8.0);
+
+        encoderDrive(DRIVE_SPEED, 2, 2, 2.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
