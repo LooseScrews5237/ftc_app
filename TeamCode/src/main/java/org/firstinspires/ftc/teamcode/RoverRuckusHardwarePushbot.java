@@ -84,7 +84,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
                                                             (1.25 * 3.1415);
 
     /* Motor configuration values */
-    private final double ARM_PIVOT_SPEED = 0.3;
+    private final double ARM_PIVOT_SPEED = 0.7;
     private final double ARM_EXTENSION_SPEED = 0.3;
     private final double LIFT_ARM_UP_POWER = 0.5;
     private final double LIFT_ARM_DOWN_POWER = 0.75;

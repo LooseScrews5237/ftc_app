@@ -143,10 +143,10 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         if (robot.EnableArmPivotMotor) {
             // Note: pushing the analog stick forward will result in a negative number
             if (gamepad2.left_stick_y < -ANALOG_DEADZONE) {
-                robot.pivotArmForward();
+                robot.pivotArmBackward();
             }
             else if (gamepad2.left_stick_y > ANALOG_DEADZONE) {
-                robot.pivotArmBackward();
+                robot.pivotArmForward();
             }
             else {
                 robot.pivotArmStop();
