@@ -72,12 +72,12 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
 
     /* Public constants */
-    public static final double ROBOT_DIAMETER_INCHES   = 17.5;
+    private static final double ROBOT_DIAMETER_INCHES   = 17.5;
     public static final double INCHES_PER_DEGREE       = (ROBOT_DIAMETER_INCHES * Math.PI) / 360; // Number of inches in 1 degree = ~0.1527 inch
-    public static final double COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    public static final double DRIVE_GEAR_REDUCTION    = 0.40 ;     // This is < 1.0 if geared UP
-    public static final double LIFT_GEAR_REDUCTION     = 4.0;
-    public static final double WHEEL_DIAMETER_INCHES   = 3.0 ;     // For figuring circumference
+    private static final double COUNTS_PER_MOTOR_REV    = 1440;
+    private static final double DRIVE_GEAR_REDUCTION    = 0.40;
+    private static final double LIFT_GEAR_REDUCTION     = 4.0;
+    private static final double WHEEL_DIAMETER_INCHES   = 3.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
     public static final double COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
