@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */
-    private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(); // use the class created to define a Pushbot's hardware
+    private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(this, telemetry); // use the class created to define a Pushbot's hardware
     private final double ANALOG_DEADZONE = 0.2;
 
     /*
@@ -64,12 +64,12 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.EnableLift = true;
-        robot.EnableColorSensor = false;
-        robot.EnableDriveMotors = true;
-        robot.EnableBeaterBar = false;
-        robot.EnableArmPivotMotor = true;
-        robot.EnableArmExtensionMotor = false;
+        robot.LiftMotorEnabled = true;
+        robot.ColorSensorEnabled = false;
+        robot.DriveMotorsEnabled = true;
+        robot.BeaterBarEnabled = false;
+        robot.PivotMotorsEnabled = true;
+        robot.ArmExtensionMotorEnabled = true;
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -121,7 +121,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         }
 
         // manipulator control
-        if (robot.EnableLift) {
+        if (robot.LiftMotorEnabled) {
             if (gamepad2.left_bumper) {
                 robot.raiseLiftArm();
             }
@@ -133,14 +133,14 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
         }
 
-        if (robot.EnableDriveMotors) {
+        if (robot.DriveMotorsEnabled) {
             robot.leftFrontDrive.setPower(leftPower);
             robot.leftRearDrive.setPower(leftPower);
             robot.rightFrontDrive.setPower(rightPower);
             robot.rightRearDrive.setPower(rightPower);
         }
 
-        if (robot.EnableArmPivotMotor) {
+        if (robot.PivotMotorsEnabled) {
             // Note: pushing the analog stick forward will result in a negative number
             if (gamepad2.left_stick_y < -ANALOG_DEADZONE) {
                 robot.pivotArmBackward();
@@ -153,7 +153,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
         }
 
-        if (robot.EnableArmExtensionMotor) {
+        if (robot.ArmExtensionMotorEnabled) {
             // Note: pushing the analog stick forward will result in a negative number
             if (gamepad2.right_stick_y < -ANALOG_DEADZONE) {
                 robot.extensionArmExtend();

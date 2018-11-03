@@ -29,10 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -52,7 +55,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public class RoverRuckusHardwarePushbot extends HardwarePushbot
 {
-    /* Public OpMode members. */
+    // Motor variables
     public DcMotor leftFrontDrive   = null;
     public DcMotor leftRearDrive    = null;
     public DcMotor rightFrontDrive  = null;
@@ -61,14 +64,15 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public DcMotor beaterBarMotor   = null;
     public DcMotor armPivotMotor    = null;
     public DcMotor armExtensionMotor = null;
-
     public ColorSensor colorSensor  = null;
-    public boolean EnableLift = true;
-    public boolean EnableColorSensor = true;
-    public boolean EnableBeaterBar = true;
-    public boolean EnableDriveMotors = true;
-    public boolean EnableArmPivotMotor = true;
-    public boolean EnableArmExtensionMotor = true;
+
+    // Hardware Status Flags
+    public boolean LiftMotorEnabled = true;
+    public boolean ColorSensorEnabled = true;
+    public boolean BeaterBarEnabled = true;
+    public boolean DriveMotorsEnabled = true;
+    public boolean PivotMotorsEnabled = true;
+    public boolean ArmExtensionMotorEnabled = true;
 
 
     /* Public constants */
@@ -85,17 +89,22 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
     /* Motor configuration values */
     private final double ARM_PIVOT_SPEED = 0.7;
-    private final double ARM_EXTENSION_SPEED = 0.3;
+    private final double ARM_EXTENSION_SPEED = 1.0;
     private final double LIFT_ARM_UP_POWER = 0.5;
     private final double LIFT_ARM_DOWN_POWER = 0.75;
     private final double BEATER_BAR_POWER = 0.5;
+    private final double AUTONOMOUS_DRIVE_SPEED = 0.2;
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
+    private OpMode opMode;
+    private Telemetry telemetry;
+
 
     /* Constructor */
-    public RoverRuckusHardwarePushbot(){
-
+    public RoverRuckusHardwarePushbot(OpMode opMode, Telemetry telemetry){
+        this.opMode = opMode;
+        this.telemetry = telemetry;
     }
 
     /* Initialize standard Hardware interfaces */
@@ -103,8 +112,8 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
-        if (EnableDriveMotors) {
+        // Drive Motors
+        try {
             leftFrontDrive  = hwMap.get(DcMotor.class, "left_front_drive");
             leftRearDrive   = hwMap.get(DcMotor.class, "left_rear_drive");
             rightFrontDrive = hwMap.get(DcMotor.class, "right_front_drive");
@@ -117,38 +126,66 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             // Set all motors to run without encoders.
             setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+        catch (Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            DriveMotorsEnabled = false;
+        }
 
-        // set lift motor properties
-        if (EnableLift)
-        {
+        // Lift Motor
+        try {
             liftMotor = hwMap.get(DcMotor.class, "lift_motor");
             liftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             liftMotor.setPower(0);
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
+        catch (Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            LiftMotorEnabled = false;
+        }
 
-        // color sensor
-        if (EnableColorSensor) {
+        // Color sensor
+        try {
             colorSensor = hwMap.get(ColorSensor.class, "color_sensor");
             // Turn off the LED by default so we don't burn it out.
             colorSensor.enableLed(false);
         }
-
-        if (EnableArmExtensionMotor) {
-            armExtensionMotor = hwMap.get(DcMotor.class, "arm_extension_motor");
+        catch (Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            ColorSensorEnabled = false;
         }
 
-        if (EnableArmPivotMotor) {
+        // Arm Extension Motor
+        try {
+            armExtensionMotor = hwMap.get(DcMotor.class, "arm_extension_motor");
+            armExtensionMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armExtensionMotor.setPower(0);
+            armExtensionMotor.setDirection(DcMotor.Direction.REVERSE);
+        }
+        catch(Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            ArmExtensionMotorEnabled = false;
+        }
+
+        // Arm Pivot Motor
+        try {
             armPivotMotor = hwMap.get(DcMotor.class, "arm_pivot_motor");
             armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armPivotMotor.setPower(0);
             armPivotMotor.setDirection(DcMotor.Direction.FORWARD);
         }
+        catch (Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            PivotMotorsEnabled = false;
+        }
 
-        // beater bar
-        if (EnableBeaterBar) {
+        // Beater bar
+        try {
             beaterBarMotor = hwMap.get(DcMotor.class, "beaterbar_motor");
+        }
+        catch (Exception e) {
+            telemetry.addData("Error", e.getMessage());
+            BeaterBarEnabled = false;
         }
     }
 
@@ -270,5 +307,76 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public void setLiftMotorTargetPosition(double inchesToTravel) {
         int targetPosition = liftMotor.getCurrentPosition() + (int)(inchesToTravel * COUNTS_PER_INCH_LIFT);
         liftMotor.setTargetPosition(targetPosition);
+    }
+
+    /*
+     *  Method to perform a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
+    public void drive(double leftInches, double rightInches,
+                       double timeoutS) {
+
+        // Ensure that the opmode is still active
+        if (((LinearOpMode)opMode).opModeIsActive()) {
+            ElapsedTime runtime = new ElapsedTime();
+            // Determine new target position, and pass to motor controller
+            setNewTargetPosition(leftInches, rightInches, telemetry);
+
+            // Turn On RUN_TO_POSITION
+            setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            double driveSpeed = Math.abs(AUTONOMOUS_DRIVE_SPEED);
+            setDriveMotorPower(driveSpeed, driveSpeed);
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (((LinearOpMode)opMode).opModeIsActive() && (runtime.seconds() < timeoutS) && motorsAreBusy()) {
+                telemetry.addData("current", "%7d | %7d",
+                        leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            stopDriveMotors();
+
+            // Turn off RUN_TO_POSITION
+            setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
+    public void turn(int degrees, double timeoutS) {
+        double inches = degrees * INCHES_PER_DEGREE;
+        drive(inches, -inches, timeoutS);
+    }
+
+    public void lowerToGround(double inches, double timeoutS) {
+        if (((LinearOpMode)opMode).opModeIsActive())
+        {
+            ElapsedTime runtime = new ElapsedTime();
+            resetLiftMotorEncoder();
+            setLiftMotorTargetPosition(inches);
+            lowerLiftArm();
+
+            runtime.reset();
+
+            while (((LinearOpMode)opMode).opModeIsActive() && liftMotor.isBusy() && (runtime.seconds() < timeoutS)) {
+                telemetry.addData("Lift Position", "%d7", liftMotor.getCurrentPosition());
+            }
+
+            stopLiftArm();
+        }
     }
  }
