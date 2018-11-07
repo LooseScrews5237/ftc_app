@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
 /**
@@ -67,7 +69,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         robot.LiftMotorEnabled = true;
         robot.ColorSensorEnabled = false;
         robot.DriveMotorsEnabled = true;
-        robot.BeaterBarEnabled = false;
+        robot.BeaterBarEnabled = true;
         robot.PivotMotorsEnabled = true;
         robot.ArmExtensionMotorEnabled = true;
         robot.init(hardwareMap);
@@ -166,6 +168,13 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
         }
 
+        if (robot.BeaterBarEnabled) {
+            if (gamepad2.right_bumper) {
+                robot.runBeaterBar(DcMotor.Direction.FORWARD);
+            } else {
+                robot.stopBeaterBar();
+            }
+        }
 
         // Send telemetry message to signify robot running;
         telemetry.addData("left",  "%.2f", leftPower);
