@@ -90,11 +90,11 @@ public class Autonomous_Crater extends LinearOpMode {
 
         // Unhook from lander
         robot.drive(3, 3, 3.0);
-        robot.turn(-50, 4.0);
+        robot.turn(-45, 4.0);
 
         //drive to wall
         robot.drive(-45, -45, 8.0);
-        robot.turn(-90, 5.0);
+        robot.turn(-92, 5.0);
 
         //drive to depot
         robot.drive(55, 55, 9.0);
@@ -106,7 +106,7 @@ public class Autonomous_Crater extends LinearOpMode {
         robot.stopBeaterBar();
 
         //drive to crater
-        robot.drive(-76, -76, 16);
+        robot.drive(-74, -74, 16);
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
