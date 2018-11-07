@@ -110,10 +110,12 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             rightPower = rightPower * .5; // cut the power in half
             leftPower = leftPower * .5; // cut the power in half
         }
+        //multiply power by 2
         else if (gamepad1.right_bumper) {
             rightPower = rightPower * 2;
             leftPower = leftPower * 2;
 
+            //keep from pushing motors more than 100%
             if (rightPower > 1){
                 rightPower = 1;
             }

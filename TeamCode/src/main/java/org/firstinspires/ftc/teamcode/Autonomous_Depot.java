@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -99,7 +100,12 @@ public class Autonomous_Depot extends LinearOpMode {
         // Drive to depot
         robot.drive(36, 36, 8);
 
-        // TODO: Drop off team marker
+        //drop scrubbing bubbles
+        robot.runBeaterBar(DcMotorSimple.Direction.FORWARD);
+        sleep(1000);
+        robot.stopBeaterBar();
+
+
         // Drive to crater.
         robot.drive(-74, -74, 16);
 
