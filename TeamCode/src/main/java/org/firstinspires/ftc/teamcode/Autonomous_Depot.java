@@ -109,6 +109,9 @@ public class Autonomous_Depot extends LinearOpMode {
         // Drive to crater.
         robot.drive(-74, -74, 16);
 
+        // Extend arm over crater
+        robot.pivotArmWithEncoder(90, 3);
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }

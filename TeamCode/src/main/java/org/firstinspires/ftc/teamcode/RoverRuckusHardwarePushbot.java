@@ -75,17 +75,20 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public boolean ArmExtensionMotorEnabled = true;
 
 
-    /* Public constants */
+    /* Configuration constants */
     private static final double ROBOT_DIAMETER_INCHES   = 17.5;
     public static final double INCHES_PER_DEGREE       = (ROBOT_DIAMETER_INCHES * Math.PI) / 360; // Number of inches in 1 degree = ~0.1527 inch
     private static final double COUNTS_PER_MOTOR_REV    = 1440;
     private static final double DRIVE_GEAR_REDUCTION    = 0.40;
     private static final double LIFT_GEAR_REDUCTION     = 4.0;
+    private static final double LIFT_DIAMETER_INCHES    = 1.25;
     private static final double WHEEL_DIAMETER_INCHES   = 3.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
     public static final double COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
-                                                            (1.25 * 3.1415);
+                                                            (LIFT_DIAMETER_INCHES * 3.1415);
+    public static final double COUNTS_PER_DEGREE_ARM_PIVOT = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
+                                                                (LIFT_DIAMETER_INCHES * Math.PI);
 
     /* Motor configuration values */
     private final double ARM_PIVOT_SPEED = 0.7;
@@ -228,27 +231,6 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         rightRearDrive.setPower(-right);
     }
 
-    public void resetEncoders() {
-        setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void setNewTargetPosition(double leftInches, double rightInches, Telemetry telemetry) {
-        telemetry.addData("position", "current: %7d: %7d",
-                leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
-        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        int newLeftRearTarget  = leftRearDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-        int newRightRearTarget  = rightRearDrive.getTargetPosition() + (int)(rightInches * COUNTS_PER_INCH);
-
-        telemetry.addData("newPosition", "target: %7d: %7d", newLeftFrontTarget, newRightFrontTarget);
-        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
-        leftRearDrive.setTargetPosition(newLeftRearTarget);
-        rightFrontDrive.setTargetPosition(newRightFrontTarget);
-        rightRearDrive.setTargetPosition(newRightRearTarget);
-    }
-
-
     public void raiseLiftArm(){
         liftMotor.setPower(-LIFT_ARM_UP_POWER);
     }
@@ -292,6 +274,28 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
     public void stopBeaterBar() {
         beaterBarMotor.setPower(0);
+    }
+
+    /*************** Autonomous Functions ************************/
+
+    public void resetEncoders() {
+        setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setNewTargetPosition(double leftInches, double rightInches, Telemetry telemetry) {
+        telemetry.addData("position", "current: %7d: %7d",
+                leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition());
+        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        int newLeftRearTarget  = leftRearDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+        int newRightRearTarget  = rightRearDrive.getTargetPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+        telemetry.addData("newPosition", "target: %7d: %7d", newLeftFrontTarget, newRightFrontTarget);
+        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+        leftRearDrive.setTargetPosition(newLeftRearTarget);
+        rightFrontDrive.setTargetPosition(newRightFrontTarget);
+        rightRearDrive.setTargetPosition(newRightRearTarget);
     }
 
     public boolean motorsAreBusy() {
@@ -377,6 +381,25 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             }
 
             stopLiftArm();
+        }
+    }
+
+    public void pivotArmWithEncoder(double degrees, double timeoutS) {
+        armPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        int newTargetPosition = armPivotMotor.getCurrentPosition() + (int)(degrees * COUNTS_PER_DEGREE_ARM_PIVOT);
+        armPivotMotor.setTargetPosition(newTargetPosition);
+
+        if (((LinearOpMode)opMode).opModeIsActive()) {
+            ElapsedTime runtime = new ElapsedTime();
+            armPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            pivotArmForward();
+            while (((LinearOpMode)opMode).opModeIsActive() && (runtime.seconds() < timeoutS) && motorsAreBusy()) {
+                telemetry.addData("current", "%7d", armPivotMotor.getCurrentPosition());
+                telemetry.update();
+            }
+            pivotArmStop();
         }
     }
  }
