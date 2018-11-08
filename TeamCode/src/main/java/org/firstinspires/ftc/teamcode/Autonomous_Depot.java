@@ -84,7 +84,7 @@ public class Autonomous_Depot extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.lowerToGround( -8, 8.0);
+        robot.lowerToGround( -8.5, 8.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)

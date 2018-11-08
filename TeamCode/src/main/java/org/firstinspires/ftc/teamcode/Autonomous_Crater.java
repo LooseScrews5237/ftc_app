@@ -94,10 +94,10 @@ public class Autonomous_Crater extends LinearOpMode {
 
         //drive to wall
         robot.drive(-45, -45, 8.0);
-        robot.turn(-92, 5.0);
+        robot.turn(-95, 5.0);
 
         //drive to depot
-        robot.drive(55, 55, 9.0);
+        robot.drive(53, 53, 9.0);
 
 
         //drop scrubbing bubbles
