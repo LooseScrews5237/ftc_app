@@ -135,6 +135,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             else {
                 robot.stopLiftArm();
             }
+
         }
 
         if (robot.DriveMotorsEnabled) {
@@ -173,6 +174,8 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         if (robot.BeaterBarEnabled) {
             if (gamepad2.right_bumper) {
                 robot.runBeaterBar(DcMotor.Direction.FORWARD);
+            } else if(gamepad2.right_trigger > ANALOG_DEADZONE){
+                robot.runBeaterBar(DcMotorSimple.Direction.REVERSE);
             } else {
                 robot.stopBeaterBar();
             }

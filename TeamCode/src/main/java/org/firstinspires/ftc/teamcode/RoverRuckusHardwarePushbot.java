@@ -82,13 +82,15 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private static final double DRIVE_GEAR_REDUCTION    = 0.40;
     private static final double LIFT_GEAR_REDUCTION     = 4.0;
     private static final double LIFT_DIAMETER_INCHES    = 1.25;
+    private static final double PIVOT_GEAR_REDUCTION    = 2;
+    private static final double PIVOT_DIAMETER_INCHES   = 8;
     private static final double WHEEL_DIAMETER_INCHES   = 3.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                             (WHEEL_DIAMETER_INCHES * 3.1415);
     public static final double COUNTS_PER_INCH_LIFT    = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
                                                             (LIFT_DIAMETER_INCHES * 3.1415);
-    public static final double COUNTS_PER_DEGREE_ARM_PIVOT = (COUNTS_PER_MOTOR_REV * LIFT_GEAR_REDUCTION) /
-                                                                (LIFT_DIAMETER_INCHES * Math.PI);
+    public static final double COUNTS_PER_DEGREE_ARM_PIVOT = (COUNTS_PER_MOTOR_REV * PIVOT_GEAR_REDUCTION) /
+                                                                (PIVOT_DIAMETER_INCHES * Math.PI);
 
     /* Motor configuration values */
     private final double ARM_PIVOT_SPEED = 0.7;

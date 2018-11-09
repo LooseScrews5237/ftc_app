@@ -89,15 +89,15 @@ public class Autonomous_Crater extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
         // Unhook from lander
-        robot.drive(3, 3, 3.0);
+        robot.drive(4, 4, 4.0);
         robot.turn(-45, 4.0);
 
         //drive to wall
-        robot.drive(-45, -45, 8.0);
+        robot.drive(-46, -46, 8.0);
         robot.turn(-95, 5.0);
 
         //drive to depot
-        robot.drive(53, 53, 9.0);
+        robot.drive(54, 54, 9.0);
 
 
         //drop scrubbing bubbles
@@ -109,7 +109,7 @@ public class Autonomous_Crater extends LinearOpMode {
         robot.drive(-74, -74, 16);
 
         // Extend arm over crater
-        robot.pivotArmWithEncoder(90, 3);
+        robot.pivotArmWithEncoder(90, 10);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
