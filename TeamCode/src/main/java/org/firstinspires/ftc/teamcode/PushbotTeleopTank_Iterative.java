@@ -124,6 +124,13 @@ public class PushbotTeleopTank_Iterative extends OpMode{
             }
         }
 
+        if (robot.DriveMotorsEnabled) {
+            robot.leftFrontDrive.setPower(leftPower);
+            robot.leftRearDrive.setPower(leftPower);
+            robot.rightFrontDrive.setPower(rightPower);
+            robot.rightRearDrive.setPower(rightPower);
+        }
+
         // manipulator control
         if (robot.LiftMotorEnabled) {
             if (gamepad2.left_bumper) {
@@ -136,13 +143,6 @@ public class PushbotTeleopTank_Iterative extends OpMode{
                 robot.stopLiftArm();
             }
 
-        }
-
-        if (robot.DriveMotorsEnabled) {
-            robot.leftFrontDrive.setPower(leftPower);
-            robot.leftRearDrive.setPower(leftPower);
-            robot.rightFrontDrive.setPower(rightPower);
-            robot.rightRearDrive.setPower(rightPower);
         }
 
         if (robot.PivotMotorsEnabled) {

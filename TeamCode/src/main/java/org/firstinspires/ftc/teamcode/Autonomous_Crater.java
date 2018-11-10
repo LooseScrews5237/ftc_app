@@ -114,5 +114,4 @@ public class Autonomous_Crater extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
-
 }
