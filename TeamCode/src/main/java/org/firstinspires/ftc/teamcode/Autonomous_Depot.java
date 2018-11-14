@@ -94,8 +94,8 @@ public class Autonomous_Depot extends LinearOpMode {
         robot.turn(-50, 4.0);
 
         // Drive to wall
-        robot.drive(-45, -45, 8.0);
-        robot.turn(90,5.0);
+        robot.drive(-46, -46, 8.0);
+        robot.turn(92,5.0);
 
         // Drive to depot
         robot.drive(36, 36, 8);
@@ -110,7 +110,7 @@ public class Autonomous_Depot extends LinearOpMode {
         robot.drive(-74, -74, 16);
 
         // Extend arm over crater
-        robot.pivotArmWithEncoder(90, 3);
+        //robot.pivotArmWithEncoder(90, 3);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
