@@ -97,9 +97,9 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     public static final double COUNTS_PER_DEGREE_ARM_PIVOT = (PIVOT_DIAMETER_INCHES * Math.PI) / 360;
 
     /* Motor configuration values */
-    private final double ARM_PIVOT_SPEED = 0.7;
+    private final double ARM_PIVOT_SPEED = 1.0;
     private final double ARM_EXTENSION_SPEED = 1.0;
-    private final double LIFT_ARM_UP_POWER = 0.5;
+    private final double LIFT_ARM_UP_POWER = 0.9;
     private final double LIFT_ARM_DOWN_POWER = 1.0;
     private final double BEATER_BAR_POWER = 0.75;
     private final double AUTONOMOUS_DRIVE_SPEED = 0.2;
@@ -109,6 +109,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
+    private static final double CONFIDENCE_LEVEL = .94;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -359,7 +360,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
             // reset the timeout time and start motion.
             runtime.reset();
-            double driveSpeed = Math.abs(AUTONOMOUS_DRIVE_SPEED);
+            double driveSpeed = Math.abs(speed);
             setDriveMotorPower(driveSpeed, driveSpeed);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -385,7 +386,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     }
 
     public void drive(double leftInches, double rightInches, double timeoutS) {
-        drive(leftInches,rightInches, timeoutS, AUTONOMOUS_DRIVE_SPEED);
+        drive(leftInches,rightInches, AUTONOMOUS_DRIVE_SPEED, timeoutS);
     }
 
     public void turn(int degrees, double driveSpeed, double timeoutS) {
@@ -473,7 +474,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             telemetry.addData("# Object Detected", updatedRecognitions.size());
             for (Recognition recognition : updatedRecognitions) {
                 if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                    if (recognition.getConfidence() > .96) {
+                    if (recognition.getConfidence() > CONFIDENCE_LEVEL) {
                         goldMineralX = (int) recognition.getLeft();
                         telemetry.addData("GoldMineral Left", "%7d", goldMineralX);
                     }

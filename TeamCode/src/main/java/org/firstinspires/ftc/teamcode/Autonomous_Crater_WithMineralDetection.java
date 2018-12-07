@@ -66,6 +66,7 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(this, telemetry);   // Use a Pushbot's hardware
+    private double TURBO_BOOST = 0.8;
 
     @Override
     public void runOpMode() {
@@ -83,10 +84,11 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
         // Object Detection
         robot.initializeObjectDetection(telemetry);
+        robot.activateObjectDetection();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.lowerToGround( -9, 8.0);
+        robot.lowerToGround( -8, 5.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -96,22 +98,21 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
         robot.turn(-45, 4.0);
 
         // Move away from lander
-        robot.drive(-2, -2, 1.0);
+        robot.drive(-18, -18, TURBO_BOOST, 4.0);
+        robot.drive(-4, -4, 4.0);
 
-        robot.turn(90, 4.0);
-        robot.activateObjectDetection();
+        robot.turn(44, 4.0);
 
         int goldMineralX = -1;
-        while (goldMineralX < 400) {
+        while (goldMineralX < 0) {
             // Slowly turn until we find the mineral
-            robot.turn(5, .5);
+            robot.drive(6.0, 6.0, 0.1, 1.0);
 
             goldMineralX = robot.getGoldMineralLeftX(telemetry);
         }
+        robot.stopDriveMotors();
 
-        robot.drive(12, 12, 4);
-
-
+        robot.turn(-90, 4.0);
 
         //drive to wall
 //        robot.drive(-46, -46, 8.0);
