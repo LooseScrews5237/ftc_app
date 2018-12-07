@@ -38,7 +38,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 /**
  * This is NOT an opmode.
@@ -97,6 +103,24 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private final double LIFT_ARM_DOWN_POWER = 1.0;
     private final double BEATER_BAR_POWER = 0.75;
     private final double AUTONOMOUS_DRIVE_SPEED = 0.2;
+
+    /* Object Detection */
+    private static final String VUFORIA_KEY = "AUgUe7L/////AAAAGfkap25dZEgYr4vc2DlGeBcCrt01n02Uo2jVtP0xRrm1VxUO2AJ+M174bXduQ7oxCYVJBUtlFCPq2yquilKmT3L9MN67UMdPHPYqFVS8sPGT7teMzq0vkU2QFGVQrtoHLffAIz5fH+gyAx951lZ+Upx3Zf8+B9BkvV7+1dpn5PC6EVDodaqYyEVzCv86BIIUiXteJ7zItKuwm+vHEXVWyLDRv7YOnkIlf/gO6192NFXRLU1xkYkxtX9wH+qlb+5SRBoiGh54JzpqiRqZQGJTK1k/AC8g9ndGwHYNol9lJcI5MpZzSuCPMmWt97WoO3WHYl7AE/mTKiNFPIqpfulua1GAZH99XuNgAXJtCiehEfeP";
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
+    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
+     * Detection engine.
+     */
+    private TFObjectDetector tfod;
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
@@ -321,8 +345,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
      */
-    public void drive(double leftInches, double rightInches,
-                       double timeoutS) {
+    public void drive(double leftInches, double rightInches, double speed, double timeoutS) {
 
         // Ensure that the opmode is still active
         if (((LinearOpMode)opMode).opModeIsActive()) {
@@ -359,6 +382,15 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
 
             //  sleep(250);   // optional pause after each move
         }
+    }
+
+    public void drive(double leftInches, double rightInches, double timeoutS) {
+        drive(leftInches,rightInches, timeoutS, AUTONOMOUS_DRIVE_SPEED);
+    }
+
+    public void turn(int degrees, double driveSpeed, double timeoutS) {
+        double inches = degrees * INCHES_PER_DEGREE;
+        drive(inches, -inches, driveSpeed, timeoutS);
     }
 
     public void turn(int degrees, double timeoutS) {
@@ -401,5 +433,84 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
             }
             pivotArmStop();
         }
+    }
+
+    /* Object Detection Methods */
+
+    public void initializeObjectDetection(Telemetry telemetry) {
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
+        initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+    }
+
+    /** Activate Tensor Flow Object Detection. */
+    public void activateObjectDetection() {
+        if (tfod != null) {
+            tfod.activate();
+        }
+    }
+
+    public void stopObjectDetection() {
+        if (tfod != null) {
+            tfod.shutdown();
+        }
+    }
+
+    public boolean objectDetectionIsActive() {
+        return  tfod != null && tfod.getUpdatedRecognitions() != null;
+    }
+
+    public int getGoldMineralLeftX(Telemetry telemetry) {
+        int goldMineralX = -1;
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+        if (updatedRecognitions != null) {
+            telemetry.addData("# Object Detected", updatedRecognitions.size());
+            for (Recognition recognition : updatedRecognitions) {
+                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                    if (recognition.getConfidence() > .96) {
+                        goldMineralX = (int) recognition.getLeft();
+                        telemetry.addData("GoldMineral Left", "%7d", goldMineralX);
+                    }
+                }
+            }
+            telemetry.update();
+        }
+
+        return goldMineralX;
+    }
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+    }
+
+    /**
+     * Initialize the Tensor Flow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
  }
