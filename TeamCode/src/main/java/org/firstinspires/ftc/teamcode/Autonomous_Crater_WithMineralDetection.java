@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
@@ -80,10 +81,12 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
         robot.resetEncoders();
 
+        // Object Detection
+        robot.initializeObjectDetection(telemetry);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.lowerToGround( -8, 8.0);
+        robot.lowerToGround( -9, 8.0);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -95,18 +98,19 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
         // Move away from lander
         robot.drive(-2, -2, 1.0);
 
-        // Object Detection
-        robot.initializeObjectDetection(telemetry);
+        robot.turn(90, 4.0);
         robot.activateObjectDetection();
 
-        // Slowly turn until we find the mineral
-        robot.setDriveMotorPower(0.2, -0.2);
-
         int goldMineralX = -1;
-        while (goldMineralX < 200) {
+        while (goldMineralX < 400) {
+            // Slowly turn until we find the mineral
+            robot.turn(5, .5);
+
             goldMineralX = robot.getGoldMineralLeftX(telemetry);
         }
-        robot.stopDriveMotors();
+
+        robot.drive(12, 12, 4);
+
 
 
         //drive to wall
