@@ -109,18 +109,10 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    private static final double CONFIDENCE_LEVEL = .94;
+    private static final double CONFIDENCE_LEVEL = .8;
 
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
+
     private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
-     * Detection engine.
-     */
     private TFObjectDetector tfod;
 
     /* local OpMode members. */
@@ -484,6 +476,59 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
         }
 
         return goldMineralX;
+    }
+
+    public String tryGetGoldMineralPosition() {
+        String goldPosition = null;
+
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                int count = updatedRecognitions.size();
+                telemetry.addData("# Object Detected", count);
+
+                if (count == 2) {
+                    int goldMineralX = -1;
+                    int silverMineral1X = -1;
+                    int silverMineral2X = -1;
+                    for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData("Label", recognition.getLabel());
+                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            goldMineralX = (int) recognition.getLeft();
+                        } else if (silverMineral1X == -1) {
+                            silverMineral1X = (int) recognition.getLeft();
+                        } else if (silverMineral2X == -1) {
+                            silverMineral2X = (int) recognition.getLeft();
+                        }
+                    }
+                    if (goldMineralX != -1 && silverMineral1X != -1) {
+                        if (goldMineralX < silverMineral1X) {
+                            goldPosition = "Left";
+                        } else if (goldMineralX > silverMineral1X) {
+                            goldPosition = "Center";
+                        } else {
+                            goldPosition = "Left";
+                        }
+                        telemetry.addData("Gold Mineral Position", goldPosition);
+                    }
+                    else {
+                        telemetry.addData("Error", "Could not find gold mineral!");
+                    }
+                }
+                else {
+                    for (Recognition recognition : updatedRecognitions) {
+                        if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            telemetry.addData("Gold POS", recognition.getLeft());
+                        }
+                    }
+                }
+                telemetry.update();
+            }
+        }
+
+        return goldPosition;
     }
 
     /**

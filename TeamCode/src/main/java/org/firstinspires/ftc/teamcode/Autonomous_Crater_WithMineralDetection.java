@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -67,6 +68,7 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(this, telemetry);   // Use a Pushbot's hardware
     private double TURBO_BOOST = 0.8;
+    private double SAMPLE_TIMEOUT = 28;
 
     @Override
     public void runOpMode() {
@@ -90,48 +92,41 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
         robot.lowerToGround( -8, 5.0);
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        // Sample Minerals
+        ElapsedTime runtime = new ElapsedTime();
+        String goldMineralPosition = null;
+        while(opModeIsActive() && goldMineralPosition == null && runtime.seconds() < SAMPLE_TIMEOUT) {
+            goldMineralPosition = robot.tryGetGoldMineralPosition();
+        }
+        robot.stopObjectDetection();
+
+        if (goldMineralPosition == null)
+            goldMineralPosition = "Right";
 
         // Unhook from lander
         robot.drive(4, 4, 4.0);
         robot.turn(-45, 4.0);
 
-        // Move away from lander
-        robot.drive(-18, -18, TURBO_BOOST, 4.0);
-        robot.drive(-4, -4, 4.0);
+        robot.drive(-4, -4, 2);
 
-        robot.turn(44, 4.0);
-
-        int goldMineralX = -1;
-        while (goldMineralX < 0) {
-            // Slowly turn until we find the mineral
-            robot.drive(6.0, 6.0, 0.1, 1.0);
-
-            goldMineralX = robot.getGoldMineralLeftX(telemetry);
+        // Check for mineral position
+        switch (goldMineralPosition) {
+            case "Left":
+                robot.drive(-18, -18, 10);
+                robot.turn(-45, 2);
+                robot.drive(-16, -16, 10);
+                break;
+            case "Right":
+                robot.turn(-90, 4.0);
+                robot.drive(-20, -20, 10);
+                robot.turn(45, 4.0);
+                robot.drive(-12, -12, 10);
+                break;
+            case "Center":
+                robot.turn(-45, 4.0);
+                robot.drive(-26, -26, 18);
+                break;
         }
-        robot.stopDriveMotors();
-
-        robot.turn(-90, 4.0);
-
-        //drive to wall
-//        robot.drive(-46, -46, 8.0);
-//        robot.turn(-98, 5.0);
-//
-//        //drive to depot
-//        robot.drive(54, 54, 9.0);
-//
-//
-//        //drop scrubbing bubbles
-//        robot.runBeaterBar(DcMotorSimple.Direction.FORWARD);
-//        sleep(1000);
-//        robot.stopBeaterBar();
-//
-//        //drive to crater
-//        robot.drive(-74, -74, 16);
-
-        // Extend arm over crater
-        //robot.pivotArmWithEncoder(90, 10);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
