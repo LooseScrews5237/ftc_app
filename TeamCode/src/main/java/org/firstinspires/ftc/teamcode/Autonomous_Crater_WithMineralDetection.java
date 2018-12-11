@@ -151,24 +151,11 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
                 break;
             case "Unknown":
                 // Unhook from lander
-                robot.turn(-45, 4.0);
-                robot.drive(-4, -4, 2);
+                robot.turn(-42, 4.0);
 
-                // Try to knock off the right position
-                robot.turn(-90, 4);
-                robot.drive(-12, -12, 5);
-                robot.turn(45, 4);
-                robot.drive(-16, -16, 5);
-
-                // Drive to wall
-                robot.drive(16, 16, 5);
-                robot.turn(45, 4);
-                robot.drive(-40, -40, 10);
-                robot.turn(-45, 4);
-                robot.drive(-40, -40, 10);
-
-                //robot.drive(-40, -40, TURBO_BOOST, 8.0);
-                //robot.drive(-6, -6, 6);
+                //drive to wall
+                robot.drive(-40, -40, TURBO_BOOST, 8.0);
+                robot.drive(-6, -6, 6);
                 break;
         }
 
