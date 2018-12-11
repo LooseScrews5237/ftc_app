@@ -69,7 +69,7 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         robot.activateObjectDetection();
 
         while (opModeIsActive()) {
-            telemetry.addData("Gold Mineral Position", robot.tryGetGoldMineralPosition());
+            telemetry.addData("Gold Mineral Position", robot.getGoldMineralLeftX(telemetry));
         }
 
         robot.stopObjectDetection();

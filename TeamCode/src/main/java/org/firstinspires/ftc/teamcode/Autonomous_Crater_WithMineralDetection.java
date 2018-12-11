@@ -68,7 +68,7 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(this, telemetry);   // Use a Pushbot's hardware
     private double TURBO_BOOST = 0.8;
-    private double SAMPLE_TIMEOUT = 28;
+    private double SAMPLE_TIMEOUT = 5;
 
     @Override
     public void runOpMode() {
@@ -86,37 +86,52 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
         // Object Detection
         robot.initializeObjectDetection(telemetry);
-        robot.activateObjectDetection();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         robot.lowerToGround( -8, 5.0);
+        robot.activateObjectDetection();
 
         // Sample Minerals
+        String goldMineralPosition = "Unknown";
+        int goldMineralX = -1;
         ElapsedTime runtime = new ElapsedTime();
-        String goldMineralPosition = null;
-        while(opModeIsActive() && goldMineralPosition == null && runtime.seconds() < SAMPLE_TIMEOUT) {
-            goldMineralPosition = robot.tryGetGoldMineralPosition();
+        while(opModeIsActive() && goldMineralX == -1 && runtime.seconds() < SAMPLE_TIMEOUT) {
+            goldMineralX = robot.getGoldMineralLeftX(telemetry);
         }
         robot.stopObjectDetection();
+        //sleep(5000);
 
-        if (goldMineralPosition == null)
-            goldMineralPosition = "Right";
+        if (goldMineralX != -1) {
+            if (goldMineralX < 100) {
+                goldMineralPosition = "Left";
+            }
+            else if (goldMineralX > 500) {
+                goldMineralPosition = "Center";
+            }
+        }
 
         // Unhook from lander
         robot.drive(4, 4, 4.0);
-        robot.turn(-45, 4.0);
-
-        robot.drive(-4, -4, 2);
 
         // Check for mineral position
         switch (goldMineralPosition) {
             case "Left":
+                robot.turn(-45, 4.0);
+                // Knock off mineral
+                robot.drive(-4, -4, 2);
                 robot.drive(-18, -18, 10);
                 robot.turn(-45, 2);
                 robot.drive(-16, -16, 10);
+
+                // Drive to wall
+                robot.drive(16, 16, 10);
+                robot.turn(45, 4);
+                robot.drive(-26, -26, 15);
                 break;
-            case "Right":
+            case "Right": // Not currently used
+                robot.turn(-45, 4.0);
+                robot.drive(-4, -4, 2);
                 robot.turn(-90, 4.0);
                 robot.drive(-20, -20, 10);
                 robot.turn(45, 4.0);
@@ -124,9 +139,54 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
                 break;
             case "Center":
                 robot.turn(-45, 4.0);
+                // Knock off mineral
+                robot.drive(-4, -4, 2);
+                robot.turn(-45, 4.0);
                 robot.drive(-26, -26, 18);
+
+                // Drive to wall
+                robot.drive(25, 25, 12);
+                robot.turn(47, 8);
+                robot.drive(-40, -40, 10);
+                break;
+            case "Unknown":
+                // Unhook from lander
+                robot.turn(-45, 4.0);
+                robot.drive(-4, -4, 2);
+
+                // Try to knock off the right position
+                robot.turn(-90, 4);
+                robot.drive(-12, -12, 5);
+                robot.turn(45, 4);
+                robot.drive(-16, -16, 5);
+
+                // Drive to wall
+                robot.drive(16, 16, 5);
+                robot.turn(45, 4);
+                robot.drive(-40, -40, 10);
+                robot.turn(-45, 4);
+                robot.drive(-40, -40, 10);
+
+                //robot.drive(-40, -40, TURBO_BOOST, 8.0);
+                //robot.drive(-6, -6, 6);
                 break;
         }
+
+        // Drive to depot
+        robot.turn(-98, 5.0);
+
+        //drive to depot
+        robot.drive(50, 50, TURBO_BOOST, 9.0);
+        robot.drive(4, 4, 4);
+
+        //drop scrubbing bubbles
+        robot.runBeaterBar(DcMotorSimple.Direction.FORWARD);
+        sleep(1000);
+        robot.stopBeaterBar();
+
+        //drive to crater
+        robot.drive(-66, -66, TURBO_BOOST, 16);
+        robot.drive(-4, -4, 4);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

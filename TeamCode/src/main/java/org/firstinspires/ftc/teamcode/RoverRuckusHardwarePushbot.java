@@ -109,7 +109,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    private static final double CONFIDENCE_LEVEL = .8;
+    private static final double CONFIDENCE_LEVEL = .5;
 
 
     private VuforiaLocalizer vuforia;
