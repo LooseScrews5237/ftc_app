@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -62,13 +61,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Crater with Mineral", group="Pushbot")
+@Autonomous(name="Crater with Mineral", group="Pushbot")
 public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
 
     /* Declare OpMode members. */
     private RoverRuckusHardwarePushbot robot = new RoverRuckusHardwarePushbot(this, telemetry);   // Use a Pushbot's hardware
     private double TURBO_BOOST = 0.8;
-    private double SAMPLE_TIMEOUT = 5;
+    private double SAMPLE_TIMEOUT = 3;
 
     @Override
     public void runOpMode() {
@@ -142,20 +141,32 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
                 // Knock off mineral
                 robot.drive(-4, -4, 2);
                 robot.turn(-45, 4.0);
-                robot.drive(-26, -26, 18);
+                robot.drive(-22, -24, 18);
 
                 // Drive to wall
-                robot.drive(25, 25, 12);
+                robot.drive(23, 23, 12);
                 robot.turn(47, 8);
-                robot.drive(-40, -40, 10);
+                robot.drive(-44, -44, 10);
                 break;
             case "Unknown":
+                robot.AUTONOMOUS_DRIVE_SPEED = 0.3;
                 // Unhook from lander
-                robot.turn(-42, 4.0);
+                robot.turn(-45, 4.0);
+                robot.drive(-4, -4, 2);
 
-                //drive to wall
-                robot.drive(-40, -40, TURBO_BOOST, 8.0);
-                robot.drive(-6, -6, 6);
+                // Try to knock off the right position
+                robot.turn(-90, 4);
+                robot.drive(-16, -16, TURBO_BOOST, 5);
+                robot.drive(-2, -2, 4);
+                robot.turn(45, 4);
+                robot.drive(-8, -8, 5);
+
+                // Drive to wall
+                robot.drive(10, 10, 5);
+                robot.turn(89, 4);
+                robot.drive(-26, -26, TURBO_BOOST, 10);
+                robot.turn(-42, 4);
+                robot.drive(-22, -22, TURBO_BOOST, 10);
                 break;
         }
 
@@ -172,7 +183,7 @@ public class Autonomous_Crater_WithMineralDetection extends LinearOpMode {
         robot.stopBeaterBar();
 
         //drive to crater
-        robot.drive(-66, -66, TURBO_BOOST, 16);
+        robot.drive(-56, -56, TURBO_BOOST, 16);
         robot.drive(-4, -4, 4);
 
         telemetry.addData("Path", "Complete");

@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -60,6 +61,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+@Disabled
 @Autonomous(name="Pushbot: Crater", group="Pushbot")
 public class Autonomous_Crater extends LinearOpMode {
 

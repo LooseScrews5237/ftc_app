@@ -102,7 +102,7 @@ public class RoverRuckusHardwarePushbot extends HardwarePushbot
     private final double LIFT_ARM_UP_POWER = 0.9;
     private final double LIFT_ARM_DOWN_POWER = 1.0;
     private final double BEATER_BAR_POWER = 0.75;
-    private final double AUTONOMOUS_DRIVE_SPEED = 0.2;
+    public double AUTONOMOUS_DRIVE_SPEED = 0.2;
 
     /* Object Detection */
     private static final String VUFORIA_KEY = "AUgUe7L/////AAAAGfkap25dZEgYr4vc2DlGeBcCrt01n02Uo2jVtP0xRrm1VxUO2AJ+M174bXduQ7oxCYVJBUtlFCPq2yquilKmT3L9MN67UMdPHPYqFVS8sPGT7teMzq0vkU2QFGVQrtoHLffAIz5fH+gyAx951lZ+Upx3Zf8+B9BkvV7+1dpn5PC6EVDodaqYyEVzCv86BIIUiXteJ7zItKuwm+vHEXVWyLDRv7YOnkIlf/gO6192NFXRLU1xkYkxtX9wH+qlb+5SRBoiGh54JzpqiRqZQGJTK1k/AC8g9ndGwHYNol9lJcI5MpZzSuCPMmWt97WoO3WHYl7AE/mTKiNFPIqpfulua1GAZH99XuNgAXJtCiehEfeP";
